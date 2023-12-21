@@ -7,7 +7,11 @@ export class Bookmark {
   private localStorage: MyLocalStorage;
   constructor() {
     this.temp_bookmark = [];
+
+    // get object from singleton
     this.localStorage = MyLocalStorage.getInstance();
+
+    // read bookmark and update temp
     const bookMark = this.localStorage.get("bookmark");
     if (!bookMark) {
       this.localStorage.set("bookmark", JSON.stringify([]));
@@ -16,7 +20,11 @@ export class Bookmark {
     }
   }
 
+
+  
   async selectAction(pet: Pet) {
+
+    // ask the user to select an option
     const selected = await prompts([
       {
         type: "select",
@@ -30,34 +38,42 @@ export class Bookmark {
       },
     ]);
 
-    console.log(selected);
+    
 
+    // check selected option and call the function
     if (selected.type === "add") {
-      this.add(pet);
+      this.#add(pet);
     } else if (selected.type === "remove") {
-      this.remove(pet);
+      this.#remove(pet);
     } else {
-      this.display();
+      this.#display();
     }
   }
-  add(pet: Pet) {
+  
+  #add(pet: Pet) {
+
+    // check if pet exists
     const petExists = this.temp_bookmark.findIndex(({ id }) => id === pet.id);
 
-    console.log(petExists);
-
+    // add to temp and save to local storage
     if (petExists === -1) {
       this.temp_bookmark.push(pet);
       this.localStorage.set("bookmark", JSON.stringify(this.temp_bookmark));
     }
   }
-  remove(pet: Pet) {
+  
+  #remove(pet: Pet) {
+    // check if pet exists
     const petExists = this.temp_bookmark.findIndex(({ id }) => id === pet.id);
+
+    // remove from temp and save to local storage
     if (!(petExists === -1)) {
       this.temp_bookmark = this.temp_bookmark.filter(({ id }) => id !== pet.id);
       this.localStorage.set("bookmark", JSON.stringify(this.temp_bookmark));
     }
   }
-  display() {
+
+  #display() {
     this.temp_bookmark.forEach((pet) => {
       console.log(pet);
     });

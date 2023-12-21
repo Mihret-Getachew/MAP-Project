@@ -10,6 +10,8 @@ import { Bookmark } from "./Bookmark";
 export class Petfinder {
   private myLocalStorage = MyLocalStorage.getInstance();
   async getPet() {
+
+    // get input from user
     const userInput = await prompts([
       {
         type: "text",
@@ -36,23 +38,30 @@ export class Petfinder {
       },
     ]);
 
+
+    // make query string 
     let queryString = `type=${userInput.type}&gender=${userInput.gender}`;
     if (userInput.name) {
       queryString += `&name=${userInput.name}`;
     }
 
+    // get token from local storage
     const token = JSON.parse(this.myLocalStorage.get("token"));
+
+    // send request
     const rawResponse: Response = await fetch(
       `https://api.petfinder.com/v2/animals?${queryString}`,
       { method: "GET", headers: { Authorization: `Bearer ${token}` } }
     );
-
     const jsonResponse: PetResponse = await rawResponse.json();
 
+    // make pet options for prompt
     const pets: PetOption[] = jsonResponse.animals.map((animal) => {
       return { value: animal.id, title: animal.name };
     });
 
+
+    // show pet names as option
     const selectedPet = await prompts([
       {
         type: "select",
@@ -62,10 +71,18 @@ export class Petfinder {
       },
     ]);
 
+
+    // get the pet detail
     this.getPetDetail(selectedPet.petId);
   }
+
+
   async getPetDetail(petId: number) {
+
+    // get token from local storage
     const token = JSON.parse(this.myLocalStorage.get("token"));
+
+    // send request
     const rawResponse: Response = await fetch(
       `https://api.petfinder.com/v2/animals/${petId}`,
       {
@@ -74,6 +91,8 @@ export class Petfinder {
       }
     );
     const jsonResponse: PetDetailResponse = await rawResponse.json();
+
+    // show pet detail
     const petDetail: PetDescription = jsonResponse.animal;
     console.log(`
     Name: ${petDetail.name},
@@ -83,7 +102,11 @@ export class Petfinder {
     Colors: ${petDetail.colors.primary},
     Status: ${petDetail.status}`);
 
+
+
     const bookMark: Bookmark = new Bookmark();
+
+    // start bookmark options
     bookMark.selectAction({ id: petDetail.id, name: petDetail.name });
   }
 }

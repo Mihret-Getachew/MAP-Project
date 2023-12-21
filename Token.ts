@@ -21,8 +21,11 @@ export class Token {
   }
 
   checkExpiry(token: string): boolean {
+    // decode token
     const decodeToken = jwtDecode<JWTType>(token);
     const now = Math.floor(Date.now() / 1000);
+
+    // check if not expired
     if (decodeToken.exp > now) return true;
     else {
       return false;
@@ -30,6 +33,8 @@ export class Token {
   }
 
   async getToken() {
+
+    // send request
     const rawResponse: Response = await fetch(
       "https://api.petfinder.com/v2/oauth2/token",
       {
@@ -43,6 +48,8 @@ export class Token {
       }
     );
     const jsonResponse = await rawResponse.json();
+
+    // save token to local storage
     this.myLocalStorage.set("token", JSON.stringify(jsonResponse.access_token));
   }
 }
