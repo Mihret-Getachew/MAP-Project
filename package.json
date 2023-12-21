@@ -1,0 +1,24 @@
+{
+  "name": "final-mercy-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cross-fetch": "^4.0.0",
+    "jwt-decode": "^4.0.0",
+    "node-localstorage": "^3.0.5",
+    "prompts": "^2.4.2",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/node-localstorage": "^1.3.3",
+    "@types/prompt": "^1.1.8",
+    "@types/prompts": "^2.4.9"
+  }
+}
