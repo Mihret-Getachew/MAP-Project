@@ -10,7 +10,6 @@ import { Bookmark } from "./Bookmark";
 export class Petfinder {
   private myLocalStorage = MyLocalStorage.getInstance();
   async getPet() {
-
     // get input from user
     const userInput = await prompts([
       {
@@ -38,8 +37,7 @@ export class Petfinder {
       },
     ]);
 
-
-    // make query string 
+    // make query string
     let queryString = `type=${userInput.type}&gender=${userInput.gender}`;
     if (userInput.name) {
       queryString += `&name=${userInput.name}`;
@@ -60,7 +58,6 @@ export class Petfinder {
       return { value: animal.id, title: animal.name };
     });
 
-
     // show pet names as option
     const selectedPet = await prompts([
       {
@@ -71,14 +68,11 @@ export class Petfinder {
       },
     ]);
 
-
     // get the pet detail
     this.getPetDetail(selectedPet.petId);
   }
 
-
   async getPetDetail(petId: number) {
-
     // get token from local storage
     const token = JSON.parse(this.myLocalStorage.get("token"));
 
@@ -102,11 +96,10 @@ export class Petfinder {
     Colors: ${petDetail.colors.primary},
     Status: ${petDetail.status}`);
 
-
-
     const bookMark: Bookmark = new Bookmark();
 
     // start bookmark options
-    bookMark.selectAction({ id: petDetail.id, name: petDetail.name });
+    await bookMark.selectAction({ id: petDetail.id, name: petDetail.name });
+    this.getPet();
   }
 }

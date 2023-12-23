@@ -6,18 +6,22 @@ import { JWTType } from "./types";
 
 export class Token {
   private myLocalStorage = MyLocalStorage.getInstance();
+
   async checkOnDataBase() {
     const token = this.myLocalStorage.get("token");
+
     if (!token) {
       await this.getToken();
     } else {
       const expired = this.checkExpiry(token);
-      if (expired === false) {
+      if (expired === true) {
         await this.getToken();
       }
     }
-    const userInput = new Petfinder();
-    userInput.getPet();
+
+    //
+    const petFinder = new Petfinder();
+    petFinder.getPet();
   }
 
   checkExpiry(token: string): boolean {
@@ -26,14 +30,13 @@ export class Token {
     const now = Math.floor(Date.now() / 1000);
 
     // check if not expired
-    if (decodeToken.exp > now) return true;
+    if (decodeToken.exp > now) return false;
     else {
-      return false;
+      return true;
     }
   }
 
   async getToken() {
-
     // send request
     const rawResponse: Response = await fetch(
       "https://api.petfinder.com/v2/oauth2/token",
@@ -53,3 +56,7 @@ export class Token {
     this.myLocalStorage.set("token", JSON.stringify(jsonResponse.access_token));
   }
 }
+
+// start project
+const token = new Token();
+token.checkOnDataBase();
